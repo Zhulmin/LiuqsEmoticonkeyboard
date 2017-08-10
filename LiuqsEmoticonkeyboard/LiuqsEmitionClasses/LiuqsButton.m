@@ -12,6 +12,10 @@
 
 - (void)setEmotionName:(NSString *)emotionName {
 
+    if ([emotionName containsString:@"delete"]) {
+        // signed by rain  删除图标从Assets加载
+    }
+    
     _emotionName = emotionName;
     UIImage *image = [UIImage imageNamed:emotionName];
     if (image) {[self setImage:image forState:UIControlStateNormal];}

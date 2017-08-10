@@ -114,11 +114,15 @@ static NSString *const checkStr = @"\\[[a-zA-Z0-9\\u4e00-\\u9fa5]+\\]";
         
         NSString *imageName = [imageDic objectForKey:@"imageName"];
         
+        UIImage *sizeImage = [UIImage imageNamed:imageName];
+        
         NSString *path = [[NSBundle mainBundle]pathForResource:imageName ofType:@"gif"];
         
         NSData *data = [NSData dataWithContentsOfFile:path];
         
-        YYImage *image = [YYImage imageWithData:data scale:2];
+        // 修改加载表情的大小:  modified by rain
+        
+        YYImage *image = [YYImage imageWithData:data scale:sizeImage.scale * sizeImage.size.width / _font.lineHeight];
         
         image.preloadAllAnimatedImageFrames = YES;
         
