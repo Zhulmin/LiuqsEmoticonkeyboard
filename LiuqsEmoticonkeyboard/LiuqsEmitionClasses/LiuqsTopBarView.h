@@ -37,6 +37,12 @@
  * 表情按钮
  */
 @property(nonatomic, strong) UIButton *topBarEmotionBtn;
+
+/*
+ * 添加图片按钮
+ */
+@property(nonatomic, strong) UIButton *addPicturnBtn;
+
 /*
  * 当前键盘的高度， 区分是文字键盘还是表情键盘
  */

@@ -53,5 +53,8 @@
  */
 + (instancetype)showKeyBoardInView:(UIView *)view;
 
+- (void)showSystemKeyBoard;
+
+- (void)showEmotionKeyBorad;
 
 @end

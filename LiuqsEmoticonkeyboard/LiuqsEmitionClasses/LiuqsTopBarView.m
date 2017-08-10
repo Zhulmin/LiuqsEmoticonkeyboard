@@ -30,6 +30,7 @@
         _textView.returnKeyType = UIReturnKeySend;
         _textView.layer.cornerRadius = 5;
         _textView.layer.borderWidth = 0.5f;
+        _textView.hidden = YES;
         _textView.layer.borderColor = ColorRGB(215, 215, 225).CGColor;
         _textView.scrollEnabled = YES;
         _textView.frame = CGRectMake(10, 5, TextViewW, TextViewH);
@@ -65,8 +66,19 @@
         [_topBarEmotionBtn setImage:[UIImage imageNamed:@"group_topic_expression"] forState:UIControlStateNormal];
         [_topBarEmotionBtn setImage:[UIImage imageNamed:@"group_topic_keyboard"] forState:UIControlStateSelected];
         [_topBarEmotionBtn addTarget:self action:@selector(emotionBtnDidClicked:) forControlEvents:UIControlEventTouchUpInside];
+//        _topBarEmotionBtn.hidden = YES;
     }
     return _topBarEmotionBtn;
+}
+
+
+- (UIButton *)addPicturnBtn {
+    if (!_addPicturnBtn) {
+        _addPicturnBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_addPicturnBtn setTitle:@"图片" forState:UIControlStateNormal];
+        [_addPicturnBtn setBackgroundImage:[UIImage createImageWithColor:ColorRGB(0, 186, 255)] forState:UIControlStateNormal];
+    }
+    return _addPicturnBtn;
 }
 
 //构造方法
@@ -100,6 +112,7 @@
     [self addSubview:self.topLine];
     [self addSubview:self.bottomLine];
     [self addSubview:self.topBarEmotionBtn];
+    [self addSubview:self.addPicturnBtn];
 }
 //约束位置
 - (void)layoutViews {
@@ -107,7 +120,9 @@
     self.frame = CGRectMake(0, screenH - topBarH, screenW, CGRectGetMaxY(self.textView.frame) + 5);
     self.bottomLine.frame = CGRectMake(0, CGRectGetHeight(self.frame) - 0.5, screenW, 0.5);
     self.topLine.frame = CGRectMake(0, 0, screenW, 0.5);
-    self.topBarEmotionBtn.frame = CGRectMake(CGRectGetMaxX(_textView.frame) + 5, CGRectGetHeight(self.frame) - 5 - emotionBtnH, emotionBtnW, emotionBtnH);
+//    self.topBarEmotionBtn.frame = CGRectMake(CGRectGetMaxX(_textView.frame) + 5, CGRectGetHeight(self.frame) - 5 - emotionBtnH, emotionBtnW, emotionBtnH);
+    self.topBarEmotionBtn.frame = CGRectMake(emotionBtnW*2, CGRectGetHeight(self.frame) - 5 - emotionBtnH, emotionBtnW, emotionBtnH);
+    self.addPicturnBtn.frame = CGRectMake(0, CGRectGetHeight(self.frame) - 5 - emotionBtnH, emotionBtnW*2, emotionBtnH);
 }
 
 //更新子视图
@@ -154,6 +169,7 @@
 //监听键盘改变，重设控件frame
 - (void)textViewDidChange:(UITextView *)textView {
     
+    return;
     CGFloat width   = CGRectGetWidth(textView.frame);
     CGSize newSize  = [textView sizeThatFits:CGSizeMake(width,MAXFLOAT)];
     CGRect newFrame = textView.frame;
