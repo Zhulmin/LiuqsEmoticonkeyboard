@@ -47,10 +47,16 @@
  * 当前键盘的高度， 区分是文字键盘还是表情键盘
  */
 @property(nonatomic, assign) CGFloat CurrentKeyBoardH;
+
+
+/*
+ * 申请加精开关
+ */
+@property(nonatomic, strong) UIButton *applyForSuperbBtn;
+
 /*
  * 用于主动触发输入框改变的方法
  */
 - (void)resetSubsives;
-
 
 @end

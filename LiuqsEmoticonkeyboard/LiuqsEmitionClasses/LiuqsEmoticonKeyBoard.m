@@ -58,6 +58,8 @@
     if (!_topBar) {
         _topBar = [[LiuqsTopBarView alloc]init];
         _topBar.delegate = self;
+        [_topBar.addPicturnBtn addTarget:self action:@selector(addPicturnBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_topBar.applyForSuperbBtn addTarget:self action:@selector(applyForSuperbBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         self.textView = _topBar.textView;
     }
     return _topBar;
@@ -105,6 +107,7 @@
         _sendButton = [[UIButton alloc]init];
         [_sendButton setTitle:@"发送" forState:UIControlStateNormal];
         [_sendButton setBackgroundImage:[UIImage createImageWithColor:ColorRGB(0, 186, 255)] forState:UIControlStateNormal];
+        _sendButton.hidden = YES;
         [_sendButton addTarget:self action:@selector(sendButttonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _sendButton;
@@ -139,7 +142,7 @@
     if (_emotionBtn == nil) {
         _emotionBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_emotionBtn setTitle:@"表情" forState:UIControlStateNormal];
-        _emotionBtn.backgroundColor = [[UIColor alloc] initWithRed:186/255.0f green:1.0f blue:0 alpha:1.0f];
+        [_emotionBtn setBackgroundImage:[UIImage createImageWithColor:ColorRGB(0, 186, 255)] forState:UIControlStateNormal];
         [_emotionBtn addTarget:self action:@selector(emotionBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _emotionBtn;
@@ -161,9 +164,8 @@
     if (!view) {return nil;}
     LiuqsEmoticonKeyBoard *keyboard = [[LiuqsEmoticonKeyBoard alloc]init];
     [view addSubview:keyboard];
-    [view addSubview:keyboard.topBar
-     
-     ];
+    [view addSubview:keyboard.topBar];
+    
     return keyboard;
 }
 - (void)methods {
@@ -270,6 +272,8 @@
     self.pageControl.frame = CGRectMake(0, CGRectGetMaxY(self.baseView.frame) - 5, screenW, 10);
     self.historyBtn.frame = CGRectMake(0, CGRectGetHeight(self.frame) - bottomBarH, sendBtnW, bottomBarH);
     self.emotionBtn.frame = CGRectMake(sendBtnW, CGRectGetHeight(self.frame) - bottomBarH, sendBtnW, bottomBarH);
+    self.topBar.Ex_y = screenH - self.topBar.Ex_height;
+
 }
 
 //根据页数（通过拥有的表情的个数除以每页表情数计算出来）创建pageView
@@ -323,6 +327,30 @@
     self.pageControl.hidden = YES;
     [self switchPageView:1];
 }
+
+
+// 外部关联按钮点击
+- (void)addPicturnBtnClick:(UIButton *)button {
+    
+    if ([self.delegate respondsToSelector:@selector(addPicturnBtnClickCallback)]) {
+        [self.delegate addPicturnBtnClickCallback];
+    }
+    
+    NSLog(@"%s", __func__);
+}
+
+
+- (void)applyForSuperbBtnClick:(UIButton *)button {
+    
+    button.selected = !button.selected;
+    
+    if ([self.delegate respondsToSelector:@selector(applyForSuperbBtnClickCallback:)]) {
+        [self.delegate applyForSuperbBtnClickCallback:button.selected];
+    }
+    
+    NSLog(@"%s", __func__);
+}
+
 
 
 - (void)switchPageView:(NSInteger)pageCount {

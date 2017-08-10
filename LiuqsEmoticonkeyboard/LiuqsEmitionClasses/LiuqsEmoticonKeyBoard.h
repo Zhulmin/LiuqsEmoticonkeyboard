@@ -22,6 +22,10 @@
  */
 - (void)keyBoardChanged;
 
+- (void)addPicturnBtnClickCallback;
+
+- (void)applyForSuperbBtnClickCallback:(BOOL)selected;
+
 @end
 
 @interface LiuqsEmoticonKeyBoard : UIView

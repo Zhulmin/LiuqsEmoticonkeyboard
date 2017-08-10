@@ -81,6 +81,19 @@
     return _addPicturnBtn;
 }
 
+
+
+- (UIButton *)applyForSuperbBtn {
+    if (!_applyForSuperbBtn) {
+        _applyForSuperbBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_applyForSuperbBtn setTitleColor:[UIColor yellowColor] forState:UIControlStateNormal];
+        [_applyForSuperbBtn setTitle:@"申请精品帖" forState:UIControlStateNormal];
+        _applyForSuperbBtn.backgroundColor = [UIColor grayColor];
+        [_applyForSuperbBtn sizeToFit];
+    }
+    return _applyForSuperbBtn;
+}
+
 //构造方法
 - (instancetype)init {
     
@@ -113,16 +126,22 @@
     [self addSubview:self.bottomLine];
     [self addSubview:self.topBarEmotionBtn];
     [self addSubview:self.addPicturnBtn];
+    [self addSubview:self.applyForSuperbBtn];
 }
 //约束位置
 - (void)layoutViews {
     
-    self.frame = CGRectMake(0, screenH - topBarH, screenW, CGRectGetMaxY(self.textView.frame) + 5);
+    //设置辅助键盘的frame: signed by rain
+//    self.frame = CGRectMake(0, screenH - topBarH, screenW, CGRectGetMaxY(self.textView.frame) + 5);
+        self.frame = CGRectMake(0, screenH - topBarH, screenW, CGRectGetMaxY(self.textView.frame) + 40);
     self.bottomLine.frame = CGRectMake(0, CGRectGetHeight(self.frame) - 0.5, screenW, 0.5);
     self.topLine.frame = CGRectMake(0, 0, screenW, 0.5);
 //    self.topBarEmotionBtn.frame = CGRectMake(CGRectGetMaxX(_textView.frame) + 5, CGRectGetHeight(self.frame) - 5 - emotionBtnH, emotionBtnW, emotionBtnH);
     self.topBarEmotionBtn.frame = CGRectMake(emotionBtnW*2, CGRectGetHeight(self.frame) - 5 - emotionBtnH, emotionBtnW, emotionBtnH);
     self.addPicturnBtn.frame = CGRectMake(0, CGRectGetHeight(self.frame) - 5 - emotionBtnH, emotionBtnW*2, emotionBtnH);
+    self.applyForSuperbBtn.Ex_x = 20;
+//    self.applyForSuperbBtn.Ex_y = -40;
+//    self.applyForSuperbBtn.frame = CGRectMake(20, -40, emotionBtnW*2, emotionBtnH);
 }
 
 //更新子视图
