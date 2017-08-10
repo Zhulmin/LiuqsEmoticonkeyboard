@@ -35,7 +35,18 @@
  */
 @property(nonatomic, assign) BOOL onlyHideSysKboard;
 
+
+
+/** 键盘修改: modified by rain */
+
+@property(nonatomic, strong) UIButton *historyBtn;
+
+@property(nonatomic, strong) UIButton *emotionBtn;
+
+@property(nonatomic, weak) LiuqsEmotionPageView *pageView;
+
 @end
+
 
 @implementation LiuqsEmoticonKeyBoard
 
@@ -110,6 +121,30 @@
     }
     return _baseView;
 }
+
+
+//底部 表情切换按钮
+- (UIButton *)historyBtn {
+    if (_historyBtn == nil) {
+        _historyBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_historyBtn setTitle:@"历史" forState:UIControlStateNormal];
+        _historyBtn.backgroundColor = [[UIColor alloc] initWithRed:1.0 green:186/255.0f blue:0 alpha:1.0f];
+        [_historyBtn addTarget:self action:@selector(historyBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _historyBtn;
+}
+
+
+- (UIButton *)emotionBtn {
+    if (_emotionBtn == nil) {
+        _emotionBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_emotionBtn setTitle:@"表情" forState:UIControlStateNormal];
+        _emotionBtn.backgroundColor = [[UIColor alloc] initWithRed:186/255.0f green:1.0f blue:0 alpha:1.0f];
+        [_emotionBtn addTarget:self action:@selector(emotionBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _emotionBtn;
+}
+
 
 #pragma mark ==== 重载系统方法 ==== 
 //构造方法
@@ -222,6 +257,8 @@
     [self addSubview:self.bottomBar];
     [self addSubview:self.sendButton];
     [self addSubview:self.pageControl];
+    [self addSubview:self.historyBtn];
+    [self addSubview:self.emotionBtn];
 }
 - (void)initSubViewFrames {
 
@@ -231,6 +268,8 @@
     self.sendButton.frame = CGRectMake(screenW - sendBtnW, CGRectGetHeight(self.frame) - bottomBarH, sendBtnW, bottomBarH);
     self.bottomBar.frame = CGRectMake(0, CGRectGetHeight(self.frame) - bottomBarH, screenW - sendBtnW, bottomBarH);
     self.pageControl.frame = CGRectMake(0, CGRectGetMaxY(self.baseView.frame) - 5, screenW, 10);
+    self.historyBtn.frame = CGRectMake(0, CGRectGetHeight(self.frame) - bottomBarH, sendBtnW, bottomBarH);
+    self.emotionBtn.frame = CGRectMake(sendBtnW, CGRectGetHeight(self.frame) - bottomBarH, sendBtnW, bottomBarH);
 }
 
 //根据页数（通过拥有的表情的个数除以每页表情数计算出来）创建pageView
@@ -240,6 +279,7 @@
         LiuqsEmotionPageView *pageView = [[LiuqsEmotionPageView alloc]init];
         pageView.page = i;
         [self.baseView addSubview:pageView];
+        self.pageView = pageView;
         pageView.frame = CGRectMake(i * screenW, 0, screenW, rows * emotionW +(rows + 1) * pageH);
         __weak typeof (self) weakSelf = self;
         [pageView setDeleteButtonClick:^(LiuqsButton *deleteButton) {
@@ -267,8 +307,72 @@
     [self.textView deleteBackward];
 }
 
+
+
+// 表情键盘切换
+- (void)emotionBtnClick:(UIButton *)button {
+    
+    [self.pageView removeFromSuperview];
+    self.pageControl.hidden = NO;
+    [self switchPageView:pages];
+}
+
+- (void)historyBtnClick:(UIButton *)button {
+    
+    [self.pageView removeFromSuperview];
+    self.pageControl.hidden = YES;
+    [self switchPageView:1];
+}
+
+
+- (void)switchPageView:(NSInteger)pageCount {
+    
+    
+    
+    for (int i = 0; i < pageCount; i ++) {
+        LiuqsEmotionPageView *pageView = [[LiuqsEmotionPageView alloc]init];
+        if (pageCount == 1) {
+            [pageView setHistoryPage:1];
+        }else {
+            pageView.page = i;
+        }
+        [self.baseView addSubview:pageView];
+        pageView.frame = CGRectMake(i * screenW, 0, screenW, rows * emotionW +(rows + 1) * pageH);
+        __weak typeof (self) weakSelf = self;
+        [pageView setDeleteButtonClick:^(LiuqsButton *deleteButton) {
+            [weakSelf deleteBtnClick:deleteButton];
+        }];
+        [pageView setEmotionButtonClick:^(LiuqsButton *emotionButton) {
+            [weakSelf insertEmoji:emotionButton];
+        }];
+    }
+
+}
+
+
+
+
 //点击表情时，插入图片到输入框
 - (void)insertEmoji:(LiuqsButton *)btn {
+    
+    //记录
+    NSString *historyStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"emotion_history"];
+    NSArray *arr = [historyStr componentsSeparatedByString:@","];
+    NSMutableArray *mArr =[NSMutableArray arrayWithArray:arr];
+    if ([mArr containsObject:btn.emotionName]) {
+        [mArr removeObject:btn.emotionName];
+        [mArr insertObject:btn.emotionName atIndex:0];
+        
+    }else {
+        [mArr insertObject:btn.emotionName atIndex:0];
+        if (mArr.count > 20) {
+            [mArr removeLastObject];
+        }
+    }
+    historyStr = [mArr componentsJoinedByString:@","];
+    [[NSUserDefaults standardUserDefaults] setObject:historyStr forKey:@"emotion_history"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     //创建附件
     LiuqsTextAttachment *emojiTextAttachment = [LiuqsTextAttachment new];
     NSString *emojiTag = [self getKeyForValue:btn.emotionName fromDict:self.emojiDict];

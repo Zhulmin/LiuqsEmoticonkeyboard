@@ -16,7 +16,20 @@
     _page = page;
     self.backgroundColor = [UIColor whiteColor];
     [self addEmotionButtons];
+    
+//    [self addHistoryEmotionButtons];
 }
+
+
+- (void)setHistoryPage:(NSUInteger)historyPage {
+    
+    _page = historyPage;
+    self.backgroundColor = [UIColor whiteColor];
+    [self addHistoryEmotionButtons];
+}
+
+
+
 
 - (void)addEmotionButtons {
 
@@ -43,6 +56,44 @@
         [self addSubview:btn];
     }
 }
+
+
+
+- (void)addHistoryEmotionButtons {
+    
+    // 从历史存储的数据里面获取
+    NSString *historyStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"emotion_history"];
+    
+    NSArray *arr = [historyStr componentsSeparatedByString:@","];
+    
+    int row = 1;
+    CGFloat space = (screenW - KrowCount * emotionW) / (KrowCount + 1);
+    for (int i = 0; i < emojiCount; i ++) {
+        
+        row = i / KrowCount + 1;
+        LiuqsButton *btn = [[LiuqsButton alloc]init];
+        btn.frame = CGRectMake((1 + i - (KrowCount * (row - 1))) * space + (i - (KrowCount * (row - 1))) * emotionW, space * row + (row - 1) * emotionW, emotionW, emotionW);
+        btn.btnType = (i == emojiCount - 1) ? 1 : 0;
+        if (i == emojiCount - 1) {
+            btn.emotionName = @"expression_delete";
+            btn.Ex_size = CGSizeMake(emotionW + space, emotionW + space);
+            CGFloat X = btn.Ex_x;
+            CGFloat Y = btn.Ex_y;
+            btn.Ex_x = X - space / 3;
+            btn.Ex_y = Y - space / 3;
+            [btn addTarget:self action:@selector(deleteBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        }else {
+            if (i<arr.count) {
+                btn.emotionName = arr[i];
+                [btn addTarget:self action:@selector(emotionButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+            }
+        }
+        [self addSubview:btn];
+    }
+}
+
+
+
 
 //删除按钮事件
 - (void)deleteBtnClick:(LiuqsButton *)deleteButton {

@@ -25,5 +25,6 @@
  */
 @property(nonatomic, copy)void (^deleteButtonClick)(LiuqsButton *button);
 
+- (void)setHistoryPage:(NSUInteger)historyPage;
 
 @end
